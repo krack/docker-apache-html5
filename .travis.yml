@@ -1,0 +1,26 @@
+sudo: required
+language: node_js
+services:
+- docker
+node_js:
+- node
+script:
+- docker build -t krack/docker-apache-html5:test .
+after_success:
+- docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
+- docker push krack/docker-apache-html5:test
+before_deploy:
+- docker tag krack/docker-apache-html5:test krack/docker-apache-html5:${TRAVIS_TAG}
+- docker tag krack/docker-apache-html5:${TRAVIS_TAG} krack/docker-apache-html5:latest
+- docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
+- docker push krack/docker-apache-html5:${TRAVIS_TAG}
+- docker push krack/docker-apache-html5:latest
+deploy:
+  provider: releases
+  api_key:
+    secure: JNYdqL8cXKrNZZTdYf8/0Vb91I7Fgj1T5XpZy04aGolDuTLnLt15g8RV+fi1aGxz+wcskGSSdYwkkkE2mdLrnVUNf0TpycUApFxAyv5eYrq+UrnYJ5ffDGUfv1m1CSYGoP7nrzqZ62gl9i9LonnRhNH8UA1Hy5lDTZUHgZmsojjWQMxMV2tgvUFJXOCEVxynILe0/K5VoA36eiAq34+HeV3SaLcgBIMX5hdeVE8RAG7+4+jdZPSorowXIxLdPuVmTjZ/40BkFGFX4My6+1fOYyQoEWYK4LEMwP9qa7s6V0WbOLXcBerxXqR0aQeag9S3Jj7dmexGXVpKe+qNYv6N3fVbeyDE/yQthCzo7BqNF4KHNqqq9MBFziZ/2SrjpO9js9rCAnnONPLxjqhiocUMS4AjKH5INtS4s6GtvUm+rSJy95HpFwhNQQxa506tXNMQHmUnvQSuTM31KGqVCy+hoAF+alOnQiXqO/JmXuf7VSxLD8Jpcx3xj8c21DpqSFm3DjgxhMFN/oPhP5oG7DbNEq8z7Jq/74ny0yxctfTaoT/RGcSHKBiVNfKz1EW4RT9C2Iv60QMOwKe1WtLScY7TK0fj889Ei54+JYKe2o/5lA0frmH4JhBgBSFB55RLW65+ovpUlIFB74BnmUVVwqsBOYtK1szdbRWFevyh/LRxzlE=
+  file: Dockerfile
+  skip_cleanup: true
+  on:
+    tags: true
+
