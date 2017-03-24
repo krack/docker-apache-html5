@@ -1,13 +1,14 @@
 <IfModule mod_rewrite.c>
 	RewriteEngine On
 
-
+	
 	# allow social media crawlers to work by redirecting them to a server-rendered static version on the page
 	RewriteCond %{HTTP_USER_AGENT} (facebookexternalhit/[0-9]|Twitterbot|Pinterest|Google.*snippet)
-	RewriteRule . /%{HTTP_HOST}.index.html [P]
+	RewriteRule ^index\.html$ /assets/index/%{HTTP_HOST}.index.html [P]
 
 	RewriteBase /
 	RewriteRule ^index\.html$ - [L]
+
 	RewriteCond %{REQUEST_FILENAME} !-f
 	RewriteCond %{REQUEST_FILENAME} !-d
 	RewriteRule . /index.html [L]
